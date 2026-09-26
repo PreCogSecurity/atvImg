@@ -57,10 +57,11 @@
  * inspiration when creating this plug-in.
  */
 
+/* exported atvImg */
+
 function atvImg(){
 
 	var d = document,
-		de = d.documentElement,
 		bd = d.getElementsByTagName('body')[0],
 		htm = d.getElementsByTagName('html')[0],
 		win = window,

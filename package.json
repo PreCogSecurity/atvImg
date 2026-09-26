@@ -1,10 +1,11 @@
 {
   "name": "atvimg",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "3D parallax icons like those in Apple TV.",
   "main": "atvImg.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --forceExit",
+    "lint": "eslint atvImg.js"
   },
   "repository": {
     "type": "git",
@@ -20,5 +21,10 @@
   "bugs": {
     "url": "https://github.com/drewwilson/atvImg/issues"
   },
-  "homepage": "https://github.com/drewwilson/atvImg#readme"
+  "homepage": "https://github.com/drewwilson/atvImg#readme",
+  "devDependencies": {
+    "eslint": "^9.39.5",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  }
 }
