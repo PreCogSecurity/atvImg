@@ -5,11 +5,28 @@ on:
     branches: [main, master]
   pull_request:
 
+# Least privilege. The default GITHUB_TOKEN can write to the repository; this
+# workflow only ever needs to read the source, so scope it down explicitly
+# rather than inheriting the default.
+permissions:
+  contents: read
+
+# A new push to a PR makes the in-flight run irrelevant. Cancelling it saves
+# minutes of runner time and stops a stale failure from being reported against
+# the latest commit.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     name: Test and lint
     runs-on: ubuntu-latest
     strategy:
+      # Report every matrix result instead of cancelling siblings on the first
+      # failure: a Node-specific break is exactly what this matrix exists to
+      # find.
+      fail-fast: false
       matrix:
         node-version: [18, 20, 22]
     steps:
@@ -25,8 +42,34 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
+
       - name: Lint
         run: npm run lint
 
       - name: Test
         run: npm test
+
+  minified-artifact:
+    name: Minified artifact is in sync
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # atvImg-min.js is a committed build artifact that consumers load
+      # straight from a CDN. If it drifts from atvImg.js, those consumers get
+      # different (and older) behaviour from everyone running the tests, so
+      # fail the build instead of letting the two versions diverge silently.
+      - name: Verify atvImg-min.js matches atvImg.js
+        run: npm run check-min
