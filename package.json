@@ -1,30 +1,73 @@
 {
   "name": "atvimg",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "3D parallax icons like those in Apple TV.",
   "main": "atvImg.js",
+  "files": [
+    "atvImg.js",
+    "atvImg-min.js",
+    "atvImg.css"
+  ],
   "scripts": {
-    "test": "jest --forceExit",
-    "lint": "eslint atvImg.js"
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage --coverageReporters=text --coverageReporters=lcov",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "build": "terser atvImg.js --compress --mangle -o atvImg-min.js",
+    "check-min": "npm run build && git diff --exit-code -- atvImg-min.js",
+    "verify": "npm run lint && npm test && npm run check-min",
+    "prepublishOnly": "npm run verify"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/drewwilson/atvImg.git"
+    "url": "git+https://github.com/PreCogSecurity/atvImg.git"
   },
   "keywords": [
     "html",
     "parallax",
-    "icon"
+    "icon",
+    "3d",
+    "vanilla-js"
   ],
   "author": "Drew Wilson",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/drewwilson/atvImg/issues"
+    "url": "https://github.com/PreCogSecurity/atvImg/issues"
   },
-  "homepage": "https://github.com/drewwilson/atvImg#readme",
+  "homepage": "https://github.com/PreCogSecurity/atvImg#readme",
+  "jest": {
+    "testEnvironment": "jsdom",
+    "roots": [
+      "<rootDir>/test"
+    ],
+    "collectCoverageFrom": [
+      "atvImg.js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "atvImg-min\\.js$"
+    ],
+    "coverageReporters": [
+      "text",
+      "lcov"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 90,
+        "functions": 95,
+        "lines": 95,
+        "statements": 95
+      }
+    }
+  },
   "devDependencies": {
     "eslint": "^9.39.5",
     "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0"
+    "jest-environment-jsdom": "^29.7.0",
+    "terser": "5.51.2"
   }
 }

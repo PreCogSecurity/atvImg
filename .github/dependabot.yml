@@ -1,0 +1,26 @@
+version: 2
+
+updates:
+  # Keeps the three dev-only dependencies (eslint, jest, terser) current, and
+  # the 394 transitive packages they pull in from ever being silently stale.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    groups:
+      # eslint/jest/terser are the whole toolchain; bumping them together keeps
+      # the dependency diff reviewable instead of arriving as three PRs.
+      dev-dependencies:
+        dependency-type: "development"
+
+  # actions/checkout and actions/setup-node are pinned to major tags, which
+  # move out from under you. Dependabot keeps them current.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - ci
